@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Intelligence — Early Warning Demo</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f9fafb; color: #111827; max-width: 700px; margin: 60px auto; padding: 0 20px; }
+  h1 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .subtitle { color: #6b7280; margin-bottom: 40px; font-size: 15px; }
+  .card { background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; margin-bottom: 16px; }
+  .card h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .badge { display: inline-block; background: #FEE2E2; color: #DC2626; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  .card p { color: #4b5563; font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+  .card a { display: inline-block; background: #111827; color: white; padding: 8px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; }
+  .sources { font-size: 12px; color: #9ca3af; margin-top: 8px; }
+  footer { text-align: center; color: #9ca3af; font-size: 12px; margin-top: 40px; }
+</style>
+</head>
+<body>
+<h1>Company Intelligence</h1>
+<p class="subtitle">Early warning signals from public data — what you would have seen before the collapse.</p>
+
+<div class="card">
+  <div class="badge">CRITICAL 10/10</div>
+  <h2>Silicon Valley Bank (SVB)</h2>
+  <p>Retrospective as of March 9, 2023 — 24 hours before FDIC seizure. Signals visible: emergency capital raise announcement, executive departure, 3 regulatory actions over 6 months, HN bank run mentions.</p>
+  <a href="svb-2023-03-09.html">View Intelligence Brief →</a>
+  <div class="sources">Sources: SEC EDGAR · HN Algolia</div>
+</div>
+
+<div class="card">
+  <div class="badge">CRITICAL 10/10</div>
+  <h2>Bed Bath & Beyond (BBBY)</h2>
+  <p>Retrospective as of April 23, 2023 — 2 weeks before bankruptcy filing. Signals visible: going concern language, debt default, NT late filing, 25 regulatory 8-Ks over 6 months.</p>
+  <a href="bbby-2023-04-23.html">View Intelligence Brief →</a>
+  <div class="sources">Sources: SEC EDGAR · HN Algolia</div>
+</div>
+
+<footer>All signals from public data only. Not financial advice. Built with free APIs: SEC EDGAR, openFDA, GitHub, HN Algolia, CourtListener. &copy; 2026</footer>
+</body>
+</html>
