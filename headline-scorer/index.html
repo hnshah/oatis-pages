@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headline Scorer — AI-Powered Feedback</title>
+    <meta name="description" content="Get instant AI feedback on your marketing headlines. Not keyword matching — real analysis of what makes headlines work.">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #fafafa;
+            --accent: #ff4d00;
+            --accent-light: #fff0eb;
+            --gray-100: #f5f5f5;
+            --gray-200: #e8e8e8;
+            --gray-400: #9a9a9a;
+            --gray-700: #3a3a3a;
+            --green: #00a651;
+            --yellow: #f5a623;
+            --red: #d0021b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .logo {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+        .logo-sub {
+            font-size: 11px;
+            color: var(--gray-400);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Hero */
+        .hero {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 64px 24px 48px;
+            text-align: center;
+        }
+        .hero-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 2px;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .hero h1 span {
+            color: var(--accent);
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--gray-400);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Input area */
+        .scorer-box {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 18px;
+            font-family: inherit;
+            color: var(--white);
+            resize: none;
+            min-height: 80px;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+        textarea::placeholder { color: rgba(255,255,255,0.2); }
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .char-count {
+            position: absolute;
+            bottom: 12px;
+            right: 16px;
+            font-size: 12px;
+            color: var(--gray-400);
+            pointer-events: none;
+        }
+
+        .score-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-size: 17px;
+            font-weight: 700;
+            font-family: inherit;
+            border-radius: 8px;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .score-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .score-btn:active { transform: translateY(0); }
+        .score-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 48px 0;
+            color: var(--gray-400);
+        }
+        .loading.visible { display: block; }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Results */
+        .results {
+            display: none;
+            margin-top: 40px;
+        }
+        .results.visible { display: block; }
+
+        /* Score ring */
+        .score-header {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 40px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .score-ring-container {
+            flex-shrink: 0;
+        }
+
+        .score-ring {
+            width: 120px;
+            height: 120px;
+            transform: rotate(-90deg);
+        }
+
+        .score-ring circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .score-ring .bg { stroke: rgba(255,255,255,0.06); }
+        .score-ring .fg {
+            stroke-dasharray: 327.7;
+            stroke-dashoffset: 327.7;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .score-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-ring-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 11px;
+            color: var(--gray-400);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .score-verdict {
+            flex: 1;
+        }
+        .score-verdict h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .score-verdict p {
+            font-size: 15px;
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Dimension bars */
+        .dimensions {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .dimension {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        .dim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+        .dim-name {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--gray-400);
+        }
+        .dim-score {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-400);
+        }
+        .dim-bar-bg {
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .dim-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .dim-note {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.4;
+        }
+
+        /* AI feedback block */
+        .ai-feedback {
+            background: rgba(255,77,0,0.06);
+            border: 1px solid rgba(255,77,0,0.2);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+        .ai-feedback-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+        .ai-feedback p {
+            font-size: 15px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.7;
+        }
+
+        /* Rewrite suggestion */
+        .rewrite-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+        }
+        .rewrite-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            margin-bottom: 10px;
+        }
+        .rewrite-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            line-height: 1.4;
+        }
+
+        /* Share + actions */
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .btn-ghost {
+            flex: 1;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--white);
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.04);
+        }
+
+        /* Support / CTA */
+        .support-strip {
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding-top: 32px;
+            text-align: center;
+        }
+        .support-strip p {
+            font-size: 14px;
+            color: var(--gray-400);
+            margin-bottom: 20px;
+        }
+        .support-strip p strong {
+            color: var(--white);
+        }
+        .tier-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .tier-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tier-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--accent);
+        }
+        .tier-btn.featured {
+            border-color: var(--accent);
+            background: rgba(255,77,0,0.1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            color: var(--gray-400);
+            font-size: 13px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        footer a {
+            color: var(--gray-400);
+            text-decoration: underline;
+            text-decoration-color: rgba(255,255,255,0.2);
+        }
+
+        /* Honest bar */
+        .honest-bar {
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            padding: 10px 24px;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        /* Error state */
+        .error-msg {
+            display: none;
+            background: rgba(208,2,27,0.1);
+            border: 1px solid rgba(208,2,27,0.3);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 14px;
+            color: #ff6b7a;
+            margin-top: 16px;
+        }
+        .error-msg.visible { display: block; }
+
+        /* Responsive */
+        @media (max-width: 540px) {
+            .score-header { flex-direction: column; text-align: center; gap: 20px; }
+            .actions { flex-direction: column; }
+            .tier-row { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <div class="logo">Headline Scorer</div>
+        <div class="logo-sub">by Oatis 🌾</div>
+    </div>
+    <a href="deep-analysis.html" style="font-size:12px; color: var(--gold, #f0b429); text-decoration:none; border: 1px solid rgba(240,180,41,0.3); padding: 5px 12px; border-radius: 4px; font-weight:600;">👑 Deep Analysis — $99</a>
+</header>
+
+<div class="hero">
+    <div class="hero-tag">Free Tool</div>
+    <h1>Does your headline <span>actually work?</span></h1>
+    <p>Real AI analysis — not keyword bingo. Find out why people click (or don't).</p>
+</div>
+
+<div class="scorer-box">
+    <div class="input-wrapper">
+        <textarea
+            id="headline"
+            placeholder="Paste your headline, ad copy, or subject line…"
+            maxlength="300"
+            rows="3"
+            oninput="updateCharCount()"
+        ></textarea>
+        <div class="char-count" id="charCount">0 / 300</div>
+    </div>
+
+    <button class="score-btn" id="scoreBtn" onclick="runScore()">
+        Score This Headline →
+    </button>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Analyzing with AI…</div>
+    </div>
+
+    <div class="results" id="results">
+
+        <div class="score-header">
+            <div class="score-ring-container">
+                <div class="score-ring-wrapper">
+                    <svg class="score-ring" viewBox="0 0 120 120">
+                        <circle class="bg" cx="60" cy="60" r="52"/>
+                        <circle class="fg" id="ringFg" cx="60" cy="60" r="52"/>
+                    </svg>
+                    <div class="score-ring-text">
+                        <div class="score-number" id="scoreNumber">—</div>
+                        <div class="score-label">/ 100</div>
+                    </div>
+                </div>
+            </div>
+            <div class="score-verdict">
+                <h2 id="verdictTitle">—</h2>
+                <p id="verdictSub">—</p>
+            </div>
+        </div>
+
+        <div class="dimensions" id="dimensions"></div>
+
+        <div class="ai-feedback" id="aiFeedback">
+            <div class="ai-feedback-label">AI Analysis</div>
+            <p id="aiFeedbackText">—</p>
+        </div>
+
+        <div class="rewrite-box" id="rewriteBox" style="display:none;">
+            <div class="rewrite-label">Suggested Rewrite</div>
+            <div class="rewrite-text" id="rewriteText">—</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-ghost" onclick="tweetScore()">🐦 Tweet My Score</button>
+            <button class="btn-ghost" onclick="copyResult()">📋 Copy Result</button>
+            <button class="btn-ghost" onclick="resetForm()">↩ Score Another</button>
+        </div>
+
+        <div class="support-strip">
+            <p><strong>This tool runs on AI.</strong> If it helped, consider supporting it.</p>
+            <div class="tier-row">
+                <button class="tier-btn" onclick="checkout(3)">☕ $3</button>
+                <button class="tier-btn featured" onclick="checkout(10)">🍕 $10</button>
+                <button class="tier-btn" onclick="checkout(25)">🚀 $25</button>
+                <button class="tier-btn" onclick="checkout(99)">👑 $99</button>
+            </div>
+            <p style="font-size:12px;">Powered by Ko-fi · No account needed</p>
+        </div>
+
+    </div>
+</div>
+
+<div class="honest-bar">
+    This tool was built in 25 min by an AI. <a href="https://github.com/NoatsBot/headline-scorer" target="_blank">Source on GitHub</a>. 
+    Honest stats: small but real user base. Still learning what's useful.
+</div>
+
+<footer>
+    Built by <a href="https://noats.ai">Oatis at Noats Inc</a> · 
+    <a href="https://github.com/NoatsBot/headline-scorer/issues/new" target="_blank">Report an issue</a>
+</footer>
+
+<script>
+    // ── Config ──────────────────────────────────────────────────────────────
+    const OPENROUTER_API_KEY = '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';
+    const MODEL = 'google/gemini-flash-1.5';
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function updateCharCount() {
+        const len = document.getElementById('headline').value.length;
+        document.getElementById('charCount').textContent = `${len} / 300`;
+    }
+
+    function setLoading(on) {
+        document.getElementById('loading').classList.toggle('visible', on);
+        document.getElementById('scoreBtn').disabled = on;
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('errorMsg');
+        el.textContent = msg;
+        el.classList.add('visible');
+    }
+
+    function hideError() {
+        document.getElementById('errorMsg').classList.remove('visible');
+    }
+
+    function resetForm() {
+        document.getElementById('results').classList.remove('visible');
+        document.getElementById('headline').value = '';
+        updateCharCount();
+        hideError();
+    }
+
+    // ── Scoring via AI ───────────────────────────────────────────────────────
+    async function runScore() {
+        const headline = document.getElementById('headline').value.trim();
+        if (!headline) { showError('Paste a headline first.'); return; }
+        hideError();
+        setLoading(true);
+        document.getElementById('results').classList.remove('visible');
+
+        try {
+            const result = await scoreWithAI(headline);
+            renderResults(result, headline);
+            document.getElementById('results').classList.add('visible');
+        } catch(err) {
+            showError('AI scoring unavailable right now. Try again in a moment.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function scoreWithAI(headline) {
+        const prompt = `You are a conversion copywriter and headline expert. Analyze this headline/copy and return a JSON object (no markdown, no extra text):
+
+Headline: "${headline}"
+
+Return exactly this JSON structure:
+{
+  "overall": <0-100 integer>,
+  "verdict": "<one of: Strong, Good, Weak, Needs Work>",
+  "verdict_sub": "<one sentence explaining the score>",
+  "dimensions": [
+    {"name": "Clarity", "score": <0-100>, "note": "<12 words max>"},
+    {"name": "Specificity", "score": <0-100>, "note": "<12 words max>"},
+    {"name": "Emotion", "score": <0-100>, "note": "<12 words max>"},
+    {"name": "Curiosity Gap", "score": <0-100>, "note": "<12 words max>"},
+    {"name": "Benefit", "score": <0-100>, "note": "<12 words max>"},
+    {"name": "Urgency", "score": <0-100>, "note": "<12 words max>"}
+  ],
+  "analysis": "<2-3 sentences of honest, specific feedback about why this headline works or doesn't. Mention the actual words.>",
+  "rewrite": "<improved version of the headline, same intent but higher-converting. Only include if overall < 75.>"
+}`;
+
+        const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://noatsbot.github.io/headline-scorer/',
+                'X-Title': 'Headline Scorer'
+            },
+            body: JSON.stringify({
+                model: MODEL,
+                messages: [{ role: 'user', content: prompt }],
+                max_tokens: 600,
+                temperature: 0.3
+            })
+        });
+
+        if (!resp.ok) throw new Error(`API error: ${resp.status}`);
+
+        const data = await resp.json();
+        const raw = data.choices[0].message.content.trim();
+
+        // Strip markdown code fences if present
+        const cleaned = raw.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+        return JSON.parse(cleaned);
+    }
+
+    // ── Render ───────────────────────────────────────────────────────────────
+    function getColor(score) {
+        if (score >= 70) return '#00a651';
+        if (score >= 45) return '#f5a623';
+        return '#d0021b';
+    }
+
+    function renderResults(result, headline) {
+        const score = result.overall;
+        const color = getColor(score);
+
+        // Ring
+        const ring = document.getElementById('ringFg');
+        const circumference = 327.7;
+        ring.style.stroke = color;
+        requestAnimationFrame(() => {
+            ring.style.strokeDashoffset = circumference - (score / 100) * circumference;
+        });
+
+        // Score number
+        document.getElementById('scoreNumber').textContent = score;
+        document.getElementById('scoreNumber').style.color = color;
+
+        // Verdict
+        const verdictColors = { 'Strong': '#00a651', 'Good': '#4caf50', 'Weak': '#f5a623', 'Needs Work': '#d0021b' };
+        document.getElementById('verdictTitle').textContent = result.verdict;
+        document.getElementById('verdictTitle').style.color = verdictColors[result.verdict] || color;
+        document.getElementById('verdictSub').textContent = result.verdict_sub;
+
+        // Dimensions
+        const dimContainer = document.getElementById('dimensions');
+        dimContainer.innerHTML = '';
+        (result.dimensions || []).forEach(dim => {
+            const c = getColor(dim.score);
+            dimContainer.innerHTML += `
+            <div class="dimension">
+                <div class="dim-header">
+                    <span class="dim-name">${dim.name}</span>
+                    <span class="dim-score" style="color:${c}">${dim.score}</span>
+                </div>
+                <div class="dim-bar-bg">
+                    <div class="dim-bar-fill" style="background:${c}" data-width="${dim.score}%"></div>
+                </div>
+                <div class="dim-note">${dim.note}</div>
+            </div>`;
+        });
+
+        // Animate bars
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.dim-bar-fill').forEach(el => {
+                el.style.width = el.dataset.width;
+            });
+        });
+
+        // AI analysis
+        document.getElementById('aiFeedbackText').textContent = result.analysis;
+
+        // Rewrite
+        const rewriteBox = document.getElementById('rewriteBox');
+        if (result.rewrite) {
+            document.getElementById('rewriteText').textContent = result.rewrite;
+            rewriteBox.style.display = 'block';
+        } else {
+            rewriteBox.style.display = 'none';
+        }
+    }
+
+    // ── Share ────────────────────────────────────────────────────────────────
+    function tweetScore() {
+        const score = document.getElementById('scoreNumber').textContent;
+        const headline = document.getElementById('headline').value.trim();
+        const emoji = parseInt(score) >= 70 ? '🟢' : parseInt(score) >= 45 ? '🟡' : '🔴';
+        const text = `${emoji} My headline scored ${score}/100 on Headline Scorer:\n\n"${headline.substring(0,80)}${headline.length > 80 ? '…' : ''}"\n\nFree AI-powered analysis → https://noatsbot.github.io/headline-scorer/`;
+        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+    }
+
+    function copyResult() {
+        const score = document.getElementById('scoreNumber').textContent;
+        const verdict = document.getElementById('verdictTitle').textContent;
+        const headline = document.getElementById('headline').value.trim();
+        const analysis = document.getElementById('aiFeedbackText').textContent;
+        const rewrite = document.getElementById('rewriteText').textContent;
+        const text = [
+            `Headline Score: ${score}/100 — ${verdict}`,
+            `Headline: "${headline}"`,
+            ``,
+            `Analysis: ${analysis}`,
+            rewrite ? `Suggested rewrite: "${rewrite}"` : null,
+            ``,
+            `Scored at https://noatsbot.github.io/headline-scorer/`
+        ].filter(Boolean).join('\n');
+
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.btn-ghost:nth-child(2)');
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy Result', 2000);
+        });
+    }
+
+    function checkout(amount) {
+        window.open(`https://ko-fi.com/headlinescorer?amount=${amount}`, '_blank');
+    }
+
+    // ── Keyboard shortcut ────────────────────────────────────────────────────
+    document.addEventListener('keydown', e => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runScore();
+    });
+</script>
+
+</body>
+</html>

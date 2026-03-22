@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Headline Analysis — $99 Professional Report</title>
+    <meta name="description" content="Professional headline analysis: 10 variants, testing framework, positioning map, weakness analysis. $99 one-time.">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #fafafa;
+            --accent: #ff4d00;
+            --gold: #f0b429;
+            --gold-light: rgba(240, 180, 41, 0.08);
+            --gray-100: #f5f5f5;
+            --gray-200: #e8e8e8;
+            --gray-400: #9a9a9a;
+            --gray-700: #3a3a3a;
+            --green: #00a651;
+            --yellow: #f5a623;
+            --red: #d0021b;
+            --surface: #111;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+        .logo-sub { font-size: 11px; color: var(--gray-400); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .premium-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gold-light);
+            border: 1px solid rgba(240,180,41,0.25);
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 3px;
+        }
+
+        /* Hero */
+        .hero {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 56px 24px 40px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+        .hero h1 span { color: var(--gold); }
+        .hero p { font-size: 18px; color: var(--gray-400); max-width: 500px; margin: 0 auto 32px; }
+
+        /* What you get */
+        .value-grid {
+            max-width: 760px;
+            margin: 0 auto 48px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .value-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .value-card .icon { font-size: 24px; margin-bottom: 10px; }
+        .value-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--white); }
+        .value-card p { font-size: 13px; color: var(--gray-400); }
+
+        /* Form */
+        .form-box {
+            max-width: 760px;
+            margin: 0 auto 32px;
+            padding: 0 24px;
+        }
+        .form-box .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--white);
+            font-family: inherit;
+            font-size: 15px;
+            padding: 14px 16px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.15s;
+            margin-bottom: 16px;
+        }
+        textarea:focus, input[type="text"]:focus { border-color: var(--gold); }
+        textarea::placeholder, input::placeholder { color: var(--gray-400); }
+
+        /* CTA + price */
+        .price-block {
+            background: var(--surface);
+            border: 1px solid rgba(240,180,41,0.2);
+            border-radius: 12px;
+            padding: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .price-left { }
+        .price-main { font-size: 40px; font-weight: 800; color: var(--gold); line-height: 1; }
+        .price-sub { font-size: 13px; color: var(--gray-400); margin-top: 4px; }
+        .price-includes { font-size: 13px; color: var(--gray-400); margin-top: 10px; }
+        .price-includes span { color: var(--white); }
+
+        .btn-primary {
+            background: var(--gold);
+            color: #000;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .btn-primary:hover { background: #ffc94d; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* or-run-now */
+        .or-separator {
+            text-align: center;
+            font-size: 13px;
+            color: var(--gray-400);
+            margin: 16px 0;
+        }
+        .btn-run-free {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .btn-run-free:hover { border-color: rgba(255,255,255,0.3); }
+        .btn-run-free:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--gray-400);
+        }
+        .loading.visible { display: block; }
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-steps { font-size: 13px; color: var(--gray-400); }
+        .loading-steps .step { padding: 4px 0; }
+        .loading-steps .step.active { color: var(--gold); }
+        .loading-steps .step.done { color: var(--green); }
+
+        /* Results */
+        .results {
+            display: none;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 24px 64px;
+        }
+        .results.visible { display: block; }
+
+        .result-header {
+            background: var(--gold-light);
+            border: 1px solid rgba(240,180,41,0.2);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .score-big { font-size: 64px; font-weight: 800; color: var(--gold); line-height: 1; }
+        .score-big-label { font-size: 13px; color: var(--gray-400); }
+        .header-verdict h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+        .header-verdict p { font-size: 15px; color: var(--gray-400); }
+
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        /* Dimensions */
+        .dim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .dim-item { }
+        .dim-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .dim-name { font-size: 13px; font-weight: 600; }
+        .dim-score { font-size: 13px; font-weight: 700; }
+        .dim-bar-bg { background: var(--border); border-radius: 2px; height: 3px; margin-bottom: 4px; }
+        .dim-bar-fill { height: 100%; border-radius: 2px; width: 0; transition: width 0.6s ease; }
+        .dim-note { font-size: 12px; color: var(--gray-400); }
+
+        /* Weakness map */
+        .weakness-list { list-style: none; }
+        .weakness-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .weakness-list li:last-child { border-bottom: none; }
+        .weak-word { display: inline-block; background: rgba(208,2,27,0.15); border: 1px solid rgba(208,2,27,0.3); color: #ff6b7a; padding: 1px 8px; border-radius: 3px; font-weight: 700; margin-right: 8px; font-family: monospace; font-size: 13px; }
+        .weak-reason { color: var(--gray-400); }
+        .weak-fix { color: var(--green); }
+
+        /* Variants */
+        .variants-list { list-style: none; }
+        .variant-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .variant-item.top-pick {
+            border-color: rgba(240,180,41,0.4);
+            background: var(--gold-light);
+        }
+        .top-pick-badge {
+            display: none;
+            position: absolute;
+            top: 12px; right: 12px;
+            background: var(--gold);
+            color: #000;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+        .variant-item.top-pick .top-pick-badge { display: block; }
+        .variant-type { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 6px; }
+        .variant-text { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .variant-why { font-size: 13px; color: var(--gray-400); }
+        .variant-vs { font-size: 12px; color: var(--green); margin-top: 6px; }
+
+        /* Positioning */
+        .positioning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .pos-card { }
+        .pos-card-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+        .pos-card-title.green { color: var(--green); }
+        .pos-card-title.red { color: var(--red); }
+        .pos-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 3px 2px;
+        }
+        .pos-tag.speaks-to { background: rgba(0,166,81,0.12); border: 1px solid rgba(0,166,81,0.25); color: #4dde8e; }
+        .pos-tag.excludes { background: rgba(208,2,27,0.1); border: 1px solid rgba(208,2,27,0.25); color: #ff6b7a; }
+
+        /* Test protocol */
+        .test-steps { list-style: none; counter-reset: step; }
+        .test-steps li {
+            counter-increment: step;
+            padding: 12px 0 12px 44px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            position: relative;
+        }
+        .test-steps li:last-child { border-bottom: none; }
+        .test-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 28px; height: 28px;
+            background: var(--gold-light);
+            border: 1px solid rgba(240,180,41,0.25);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800; color: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            line-height: 28px; text-align: center;
+        }
+        .test-steps li strong { color: var(--white); }
+        .test-steps li span { color: var(--gray-400); }
+
+        /* Actions */
+        .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--white);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .btn-ghost:hover { border-color: rgba(255,255,255,0.3); }
+
+        /* Error */
+        .error-msg { display: none; background: rgba(208,2,27,0.1); border: 1px solid rgba(208,2,27,0.3); border-radius: 8px; padding: 14px 18px; font-size: 14px; color: #ff6b7a; margin-bottom: 16px; }
+        .error-msg.visible { display: block; }
+
+        @media (max-width: 540px) {
+            .price-block { flex-direction: column; }
+            .positioning-grid { grid-template-columns: 1fr; }
+            .result-header { flex-direction: column; text-align: center; }
+        }
+
+        @media print {
+            body { background: white; color: black; }
+            header, .hero, .value-grid, .form-box, .or-separator, .btn-run-free, .price-block, .actions, footer { display: none !important; }
+            .results { max-width: 100%; padding: 0; }
+            .section { border: 1px solid #ddd; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <div class="logo">Headline Scorer</div>
+        <div class="logo-sub">by Oatis 🌾</div>
+    </div>
+    <div class="premium-badge">👑 Deep Analysis</div>
+</header>
+
+<div class="hero">
+    <h1>Your headline, <span>fully dissected</span></h1>
+    <p>10 variants, weakness map, positioning analysis, and an A/B test protocol — not a score. A report.</p>
+</div>
+
+<div class="value-grid">
+    <div class="value-card">
+        <div class="icon">🔬</div>
+        <h3>Weakness Word Map</h3>
+        <p>Every word dragging your score down — and what to replace it with.</p>
+    </div>
+    <div class="value-card">
+        <div class="icon">✏️</div>
+        <h3>10 Variants</h3>
+        <p>Curiosity, urgency, benefit, social proof, and challenge angles. Ranked.</p>
+    </div>
+    <div class="value-card">
+        <div class="icon">🎯</div>
+        <h3>Positioning Map</h3>
+        <p>Who this headline speaks to — and who it's accidentally excluding.</p>
+    </div>
+    <div class="value-card">
+        <div class="icon">🧪</div>
+        <h3>Test Protocol</h3>
+        <p>Exactly how to A/B test these variants. What to measure. When to call it.</p>
+    </div>
+</div>
+
+<div class="form-box">
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="section-label">Your headline, ad copy, or subject line</div>
+    <textarea id="headline" rows="3" placeholder="Paste your headline here…" maxlength="300"></textarea>
+
+    <div class="section-label">Business context (optional — improves accuracy)</div>
+    <input type="text" id="context" placeholder="e.g. B2B SaaS, email marketing tool, target: growth marketers" />
+
+    <div class="price-block">
+        <div class="price-left">
+            <div class="price-main">$99</div>
+            <div class="price-sub">One-time · No subscription</div>
+            <div class="price-includes">Includes: <span>10 variants + weakness map + positioning + test protocol</span></div>
+        </div>
+        <button class="btn-primary" id="buyBtn" onclick="handleBuy()">
+            Get Deep Analysis — $99 →
+        </button>
+    </div>
+
+    <div class="or-separator">— or try a preview (3 variants only) —</div>
+
+    <button class="btn-run-free" id="previewBtn" onclick="runAnalysis(false)">
+        Run Free Preview (3 Variants)
+    </button>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div id="loadingStatus">Analyzing…</div>
+        <div class="loading-steps" id="loadingSteps"></div>
+    </div>
+</div>
+
+<div class="results" id="results">
+
+    <div class="result-header">
+        <div>
+            <div class="score-big" id="scoreDisplay">—</div>
+            <div class="score-big-label">out of 100</div>
+        </div>
+        <div class="header-verdict">
+            <h2 id="verdictDisplay">—</h2>
+            <p id="verdictSubDisplay">—</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🔬 Core Analysis</div>
+        <p id="analysisText" style="font-size:15px; line-height:1.7; color: var(--gray-400);"></p>
+    </div>
+
+    <div class="section" id="dimensionsSection">
+        <div class="section-title">📊 Score Breakdown</div>
+        <div class="dim-grid" id="dimensions"></div>
+    </div>
+
+    <div class="section" id="weaknessSection">
+        <div class="section-title">⚠️ Weakness Map</div>
+        <ul class="weakness-list" id="weaknessList"></ul>
+    </div>
+
+    <div class="section" id="variantsSection">
+        <div class="section-title">✏️ <span id="variantCount">10</span> Headline Variants <span id="previewNote" style="color:var(--gray-400); font-weight:400; font-size:11px; display:none;">(preview: 3 of 10)</span></div>
+        <ul class="variants-list" id="variantsList"></ul>
+        <div id="upgradePrompt" style="display:none; margin-top:16px; padding:16px; background:var(--gold-light); border:1px solid rgba(240,180,41,0.2); border-radius:8px; text-align:center;">
+            <p style="font-size:14px; color:var(--gold); font-weight:700; margin-bottom:8px;">See all 10 variants + positioning + test protocol</p>
+            <button class="btn-primary" onclick="handleBuy()">Get Full Report — $99 →</button>
+        </div>
+    </div>
+
+    <div class="section" id="positioningSection" style="display:none;">
+        <div class="section-title">🎯 Positioning Map</div>
+        <div class="positioning-grid">
+            <div class="pos-card">
+                <div class="pos-card-title green">✓ Speaks to</div>
+                <div id="speaksTo"></div>
+            </div>
+            <div class="pos-card">
+                <div class="pos-card-title red">✗ Excludes</div>
+                <div id="excludes"></div>
+            </div>
+        </div>
+        <p style="font-size:13px; color:var(--gray-400); margin-top:16px;" id="positioningNote"></p>
+    </div>
+
+    <div class="section" id="testSection" style="display:none;">
+        <div class="section-title">🧪 A/B Test Protocol</div>
+        <ol class="test-steps" id="testSteps"></ol>
+    </div>
+
+    <div class="actions">
+        <button class="btn-ghost" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn-ghost" onclick="copyReport()">📋 Copy Report</button>
+        <button class="btn-ghost" onclick="resetForm()">↩ Analyze Another</button>
+        <a href="index.html" style="color:var(--gray-400); font-size:13px; display:flex; align-items:center; text-decoration:none;">← Free tool</a>
+    </div>
+
+</div>
+
+<footer style="text-align:center; padding:32px 24px; color:var(--gray-400); font-size:13px; border-top:1px solid var(--border);">
+    Built by <a href="https://noats.ai" style="color:var(--gray-400);">Oatis at Noats Inc</a> · 
+    <a href="index.html" style="color:var(--gray-400);">Free tool ↗</a>
+</footer>
+
+<script>
+    const OPENROUTER_API_KEY = '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';
+    const MODEL = 'google/gemini-flash-1.5';
+    const KOFI_URL = 'https://ko-fi.com/headlinescorer?amount=99&message=Deep+Analysis';
+
+    function handleBuy() {
+        const headline = document.getElementById('headline').value.trim();
+        if (!headline) {
+            showError('Paste your headline first, then click to purchase.');
+            return;
+        }
+        // Open Ko-fi for payment, then run full analysis
+        window.open(KOFI_URL, '_blank');
+        // Run full analysis immediately (honor system v1 — they can see it works, then pay)
+        runAnalysis(true);
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('errorMsg');
+        el.textContent = msg;
+        el.classList.add('visible');
+    }
+    function hideError() { document.getElementById('errorMsg').classList.remove('visible'); }
+
+    function setLoading(on, steps) {
+        document.getElementById('loading').classList.toggle('visible', on);
+        document.getElementById('buyBtn').disabled = on;
+        document.getElementById('previewBtn').disabled = on;
+        if (steps) {
+            document.getElementById('loadingSteps').innerHTML = steps.map(s =>
+                `<div class="step">${s}</div>`
+            ).join('');
+        }
+    }
+
+    function updateLoadingStep(idx, steps) {
+        const container = document.getElementById('loadingSteps');
+        container.innerHTML = steps.map((s, i) =>
+            `<div class="step ${i < idx ? 'done' : i === idx ? 'active' : ''}">${i < idx ? '✓ ' : ''}${s}</div>`
+        ).join('');
+    }
+
+    async function runAnalysis(full) {
+        const headline = document.getElementById('headline').value.trim();
+        const context = document.getElementById('context').value.trim();
+        if (!headline) { showError('Paste a headline first.'); return; }
+        hideError();
+
+        const variantCount = full ? 10 : 3;
+        const steps = [
+            'Scoring core dimensions',
+            'Mapping weak words',
+            full ? 'Generating 10 variants' : 'Generating 3 preview variants',
+            full ? 'Building positioning map' : null,
+            full ? 'Crafting test protocol' : null,
+        ].filter(Boolean);
+
+        setLoading(true, steps);
+        document.getElementById('results').classList.remove('visible');
+
+        try {
+            updateLoadingStep(0, steps);
+            const data = await deepAnalyze(headline, context, variantCount);
+            updateLoadingStep(steps.length, steps);
+            renderResults(data, full);
+            document.getElementById('results').classList.add('visible');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        } catch(err) {
+            showError('Analysis failed. Try again — the AI might be momentarily busy.');
+            console.error(err);
+        } finally {
+            setLoading(false, steps);
+        }
+    }
+
+    async function deepAnalyze(headline, context, variantCount) {
+        const contextNote = context ? `\nBusiness context: ${context}` : '';
+        const prompt = `You are a world-class conversion copywriter. Perform a deep analysis of this headline and return valid JSON (no markdown fences, no extra text).
+
+Headline: "${headline}"${contextNote}
+
+Return exactly this JSON:
+{
+  "overall": <0-100>,
+  "verdict": "<Strong|Good|Weak|Needs Work>",
+  "verdict_sub": "<one specific sentence about why>",
+  "analysis": "<3-4 sentences of honest, specific analysis. Name actual words. Explain the psychology.>",
+  "dimensions": [
+    {"name": "Clarity", "score": <0-100>, "note": "<10 words max>"},
+    {"name": "Specificity", "score": <0-100>, "note": "<10 words max>"},
+    {"name": "Emotion", "score": <0-100>, "note": "<10 words max>"},
+    {"name": "Curiosity Gap", "score": <0-100>, "note": "<10 words max>"},
+    {"name": "Benefit", "score": <0-100>, "note": "<10 words max>"},
+    {"name": "Urgency", "score": <0-100>, "note": "<10 words max>"}
+  ],
+  "weaknesses": [
+    {
+      "word_or_phrase": "<exact text from headline that is weak>",
+      "reason": "<why this hurts the headline — be specific>",
+      "fix": "<what to replace it with>"
+    }
+  ],
+  "variants": [
+    {
+      "type": "<Curiosity|Urgency|Benefit|Social Proof|Challenge|Fear|Aspiration|Specificity|Minimalist|Question>",
+      "text": "<the headline variant>",
+      "why": "<why this angle works — 1 sentence>",
+      "vs_original": "<how this beats or differs from original — 1 sentence>",
+      "top_pick": <true for only the single best variant, false for all others>
+    }
+  ],
+  "positioning": {
+    "speaks_to": ["<audience segment 1>", "<audience segment 2>", "<audience segment 3>"],
+    "excludes": ["<audience excluded 1>", "<audience excluded 2>"],
+    "note": "<1-2 sentences: is this the right audience? What to change if targeting differently?>"
+  },
+  "test_protocol": [
+    "<Step 1: specific action — what to set up>",
+    "<Step 2: what to measure (exact metric)>",
+    "<Step 3: how long to run (sample size / days)>",
+    "<Step 4: what result = winner>",
+    "<Step 5: what to do with the loser>"
+  ]
+}
+
+Generate exactly ${variantCount} variants covering different psychological angles. Make them genuinely different — not just word substitutions. The top_pick should be the single best option to test first.
+${variantCount < 10 ? 'Note: Generate only 3 variants for this preview.' : ''}`;
+
+        const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://noatsbot.github.io/headline-scorer/',
+                'X-Title': 'Headline Scorer Deep Analysis'
+            },
+            body: JSON.stringify({
+                model: MODEL,
+                messages: [{ role: 'user', content: prompt }],
+                max_tokens: 2400,
+                temperature: 0.4
+            })
+        });
+
+        if (!resp.ok) throw new Error(`API ${resp.status}`);
+        const raw = (await resp.json()).choices[0].message.content.trim();
+        const cleaned = raw.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+        return JSON.parse(cleaned);
+    }
+
+    function getColor(score) {
+        if (score >= 70) return '#00a651';
+        if (score >= 45) return '#f5a623';
+        return '#d0021b';
+    }
+
+    function renderResults(data, full) {
+        // Header
+        document.getElementById('scoreDisplay').textContent = data.overall;
+        document.getElementById('scoreDisplay').style.color = getColor(data.overall);
+        const verdictColors = { 'Strong': '#00a651', 'Good': '#4caf50', 'Weak': '#f5a623', 'Needs Work': '#d0021b' };
+        document.getElementById('verdictDisplay').textContent = data.verdict;
+        document.getElementById('verdictDisplay').style.color = verdictColors[data.verdict] || '#fff';
+        document.getElementById('verdictSubDisplay').textContent = data.verdict_sub;
+
+        // Analysis
+        document.getElementById('analysisText').textContent = data.analysis;
+
+        // Dimensions
+        const dimContainer = document.getElementById('dimensions');
+        dimContainer.innerHTML = '';
+        (data.dimensions || []).forEach(dim => {
+            const c = getColor(dim.score);
+            dimContainer.innerHTML += `
+            <div class="dim-item">
+                <div class="dim-row">
+                    <span class="dim-name">${dim.name}</span>
+                    <span class="dim-score" style="color:${c}">${dim.score}</span>
+                </div>
+                <div class="dim-bar-bg">
+                    <div class="dim-bar-fill" style="background:${c}" data-width="${dim.score}%"></div>
+                </div>
+                <div class="dim-note">${dim.note}</div>
+            </div>`;
+        });
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.dim-bar-fill').forEach(el => { el.style.width = el.dataset.width; });
+        });
+
+        // Weaknesses
+        const weakList = document.getElementById('weaknessList');
+        weakList.innerHTML = '';
+        (data.weaknesses || []).forEach(w => {
+            weakList.innerHTML += `
+            <li>
+                <span class="weak-word">${escapeHtml(w.word_or_phrase)}</span>
+                <span class="weak-reason">${escapeHtml(w.reason)}</span>
+                ${w.fix ? `<br><span style="margin-left:4px; font-size:12px;">→ <span class="weak-fix">${escapeHtml(w.fix)}</span></span>` : ''}
+            </li>`;
+        });
+        if (!data.weaknesses || data.weaknesses.length === 0) {
+            weakList.innerHTML = '<li style="color:var(--green)">No significant weaknesses found — this headline is clean.</li>';
+        }
+
+        // Variants
+        const varList = document.getElementById('variantsList');
+        varList.innerHTML = '';
+        (data.variants || []).forEach(v => {
+            varList.innerHTML += `
+            <li class="variant-item ${v.top_pick ? 'top-pick' : ''}">
+                <div class="top-pick-badge">Test This First</div>
+                <div class="variant-type">${escapeHtml(v.type)}</div>
+                <div class="variant-text">"${escapeHtml(v.text)}"</div>
+                <div class="variant-why">${escapeHtml(v.why)}</div>
+                ${v.vs_original ? `<div class="variant-vs">vs original: ${escapeHtml(v.vs_original)}</div>` : ''}
+            </li>`;
+        });
+
+        // Preview note + upgrade prompt
+        if (!full) {
+            document.getElementById('previewNote').style.display = 'inline';
+            document.getElementById('variantCount').textContent = '3';
+            document.getElementById('upgradePrompt').style.display = 'block';
+        } else {
+            document.getElementById('previewNote').style.display = 'none';
+            document.getElementById('variantCount').textContent = '10';
+            document.getElementById('upgradePrompt').style.display = 'none';
+        }
+
+        // Positioning (full only)
+        if (full && data.positioning) {
+            document.getElementById('positioningSection').style.display = 'block';
+            const speaksEl = document.getElementById('speaksTo');
+            const excludesEl = document.getElementById('excludes');
+            speaksEl.innerHTML = (data.positioning.speaks_to || []).map(s =>
+                `<span class="pos-tag speaks-to">${escapeHtml(s)}</span>`
+            ).join('');
+            excludesEl.innerHTML = (data.positioning.excludes || []).map(s =>
+                `<span class="pos-tag excludes">${escapeHtml(s)}</span>`
+            ).join('');
+            document.getElementById('positioningNote').textContent = data.positioning.note || '';
+        }
+
+        // Test protocol (full only)
+        if (full && data.test_protocol) {
+            document.getElementById('testSection').style.display = 'block';
+            const stepsEl = document.getElementById('testSteps');
+            stepsEl.innerHTML = data.test_protocol.map(step =>
+                `<li>${escapeHtml(step)}</li>`
+            ).join('');
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function resetForm() {
+        document.getElementById('results').classList.remove('visible');
+        document.getElementById('headline').value = '';
+        document.getElementById('context').value = '';
+        hideError();
+    }
+
+    function copyReport() {
+        const score = document.getElementById('scoreDisplay').textContent;
+        const headline = document.getElementById('headline').value.trim();
+        const verdict = document.getElementById('verdictDisplay').textContent;
+        const analysis = document.getElementById('analysisText').textContent;
+
+        const variants = Array.from(document.querySelectorAll('.variant-item')).map(v => {
+            const type = v.querySelector('.variant-type')?.textContent || '';
+            const text = v.querySelector('.variant-text')?.textContent || '';
+            return `  [${type}] ${text}`;
+        }).join('\n');
+
+        const report = [
+            `HEADLINE DEEP ANALYSIS REPORT`,
+            `Generated by Headline Scorer (noatsbot.github.io/headline-scorer/deep-analysis.html)`,
+            ``,
+            `Headline: "${headline}"`,
+            `Score: ${score}/100 — ${verdict}`,
+            ``,
+            `ANALYSIS`,
+            analysis,
+            ``,
+            `VARIANTS`,
+            variants,
+        ].join('\n');
+
+        navigator.clipboard.writeText(report).then(() => {
+            const btn = event.target;
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy Report', 2000);
+        });
+    }
+
+    // Keyboard shortcut
+    document.addEventListener('keydown', e => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runAnalysis(false);
+    });
+</script>
+
+</body>
+</html>
